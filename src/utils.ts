@@ -113,7 +113,6 @@ export function parseGitDiff(
  * tests is flagged.
  */
 export function getFilesWithNoTests(fileType: string, files: string[], verbose = false): string[] {
-    console.log(files);
     const spinner = ora(`Checking for related tests for ${fileType} files`);
     spinner.start();
 
@@ -179,6 +178,7 @@ export function validateCoverageMetrics(
     spinner.start();
 
     const failures: CoverageFailureData[] = [];
+    const fileMetrics: CoverageFailureData[] = [];
 
     files.forEach((file) => {
         // Extract metrics for file from coverage report
@@ -186,6 +186,14 @@ export function validateCoverageMetrics(
 
         if (testCaseMetrics) {
             const { lines, functions, statements, branches } = testCaseMetrics;
+
+            fileMetrics.push({
+                branches: branches.pct,
+                filename: file,
+                functions: functions.pct,
+                lines: lines.pct,
+                statements: statements.pct,
+            });
 
             if (
                 lines.pct < cliOptions.lineCoverageThreshold ||
@@ -205,6 +213,10 @@ export function validateCoverageMetrics(
     });
 
     spinner.succeed();
+
+    fileMetrics.forEach((metric) => {
+        logger(JSON.stringify(metric), cliOptions.verbose as boolean);
+    });
 
     return failures;
 }

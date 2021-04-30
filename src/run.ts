@@ -63,8 +63,8 @@ function run(argv: Record<string, any>): void {
         process.exit(0);
     }
 
-    noTestCasesPresent.concat(getFilesWithNoTests('modified', filteredModifiedFiles, cliOptions.verbose as boolean));
-    noTestCasesPresent.concat(getFilesWithNoTests('new', filteredNewFiles, cliOptions.verbose as boolean));
+    noTestCasesPresent.push(...getFilesWithNoTests('modified', filteredModifiedFiles, cliOptions.verbose as boolean));
+    noTestCasesPresent.push(...getFilesWithNoTests('new', filteredNewFiles, cliOptions.verbose as boolean));
 
     if (!cliOptions.skipCoverage) {
         validateCoverageFile(cliOptions.coverageFile as string);
@@ -92,10 +92,12 @@ function run(argv: Record<string, any>): void {
          * is flagged.
          */
 
-        thresholdFailures.concat(validateCoverageMetrics(coverageReport, filteredNewFiles, cliOptions));
+        thresholdFailures.push(...validateCoverageMetrics(coverageReport, filteredNewFiles, cliOptions));
     } else {
         console.log(
-            `--skipCoverage set to ${chalk.blue(cliOptions.skipCoverage)}. Skipping coverage metrics validation...`,
+            chalk.gray(
+                `--skipCoverage set to ${chalk.blue(cliOptions.skipCoverage)}. Skipping coverage metrics validation...`,
+            ),
         );
     }
 
