@@ -10,6 +10,7 @@ import {
     parseGitDiff,
     validateCoverageFile,
     validateCoverageMetrics,
+    logger,
 } from './utils';
 import { CoverageFailureData } from './types';
 
@@ -69,12 +70,22 @@ function run(argv: Record<string, any>): void {
         validateCoverageFile(cliOptions.coverageFile as string);
         const coverageReport = getCoverageReport(cliOptions.coverageFile as string);
 
-        if (cliOptions.verbose) {
-            console.log(`Branch Coverage Threshold: ${chalk.blue(cliOptions.branchCoverageThreshold)}`);
-            console.log(`Line Coverage Threshold: ${chalk.blue(cliOptions.lineCoverageThreshold)}`);
-            console.log(`Statement Coverage Threshold: ${chalk.blue(cliOptions.statementCoverageThreshold)}`);
-            console.log(`Function Coverage Threshold: ${chalk.blue(cliOptions.functionCoverageThreshold)}`);
-        }
+        logger(
+            `Branch Coverage Threshold: ${chalk.blue(cliOptions.branchCoverageThreshold)}`,
+            cliOptions.verbose as boolean,
+        );
+        logger(
+            `Line Coverage Threshold: ${chalk.blue(cliOptions.lineCoverageThreshold)}`,
+            cliOptions.verbose as boolean,
+        );
+        logger(
+            `Statement Coverage Threshold: ${chalk.blue(cliOptions.statementCoverageThreshold)}`,
+            cliOptions.verbose as boolean,
+        );
+        logger(
+            `Function Coverage Threshold: ${chalk.blue(cliOptions.functionCoverageThreshold)}`,
+            cliOptions.verbose as boolean,
+        );
 
         /**
          * Validates coverage metrics for new files. Any file that does not meet the configured coverage threshold values

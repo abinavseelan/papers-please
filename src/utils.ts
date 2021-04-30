@@ -8,7 +8,7 @@ import { NEW_FILE_FILTER, MODIFIED_FILE_FILTER } from './constants';
 import { CLIOptionObject } from './cliOptions';
 import { CoverageFailureData } from './types';
 
-function logger(str: string, verbose: boolean): void {
+export function logger(str: string, verbose: boolean): void {
     if (verbose) {
         console.log(chalk.gray(`[verbose] ${str}`));
     }
