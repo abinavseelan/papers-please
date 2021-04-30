@@ -56,6 +56,18 @@ export const CLI_OPTIONS = [
         valueKey: 'trackGlobs',
         valueType: 'string',
     },
+    {
+        defaultValue: false,
+        description: 'Show options and usage',
+        valueKey: 'help',
+        valueType: 'boolean',
+    },
+    {
+        defaultValue: false,
+        description: 'Display values for options and explicit step details',
+        valueKey: 'verbose',
+        valueType: 'boolean',
+    },
 ] as const;
 
 type CLIOptionObject = Record<ArrayElement<typeof CLI_OPTIONS>['valueKey'], string | number | boolean>;
