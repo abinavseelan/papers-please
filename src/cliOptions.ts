@@ -2,7 +2,7 @@ import { ArrayElement } from './types';
 
 export const CLI_OPTIONS = [
     {
-        defaultValue: 'development',
+        defaultValue: 'main',
         description: 'Base branch to validate against.',
         valueKey: 'baseBranch',
         valueType: 'string',
@@ -70,7 +70,7 @@ export const CLI_OPTIONS = [
     },
 ] as const;
 
-type CLIOptionObject = Record<ArrayElement<typeof CLI_OPTIONS>['valueKey'], string | number | boolean>;
+export type CLIOptionObject = Record<ArrayElement<typeof CLI_OPTIONS>['valueKey'], string | number | boolean>;
 
 export const getCliOptions = (argv: Record<string, any>): CLIOptionObject => {
     return CLI_OPTIONS.reduce((agg, cliOption) => {
