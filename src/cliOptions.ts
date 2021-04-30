@@ -2,7 +2,7 @@ import { ArrayElement } from './types';
 
 export const CLI_OPTIONS = [
     {
-        defaultValue: 'main',
+        defaultValue: 'origin/main',
         description: 'Base branch to validate against.',
         valueKey: 'baseBranch',
         valueType: 'string',

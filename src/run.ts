@@ -27,7 +27,7 @@ import { CoverageFailureData } from './types';
  * don't meet the coverage threshold defined by `branchCoverageThreshold`, `lineCoverageThreshold`, `statementCoverageThreshold`
  * or `functionCoverageThreshold` will be flagged.
  *
- * The utility exits with a failure if the flag count > 1
+ * The cli exits with a failure if the flag count > 1
  */
 
 function run(argv: Record<string, any>): void {
@@ -38,8 +38,18 @@ function run(argv: Record<string, any>): void {
 
     overrideGitPager();
 
-    const modifiedFiles = parseGitDiff('modified', MODIFIED_FILE_FILTER, cliOptions.baseBranch as string);
-    const newFiles = parseGitDiff('new', NEW_FILE_FILTER, cliOptions.baseBranch as string);
+    const modifiedFiles = parseGitDiff(
+        'modified',
+        MODIFIED_FILE_FILTER,
+        cliOptions.baseBranch as string,
+        cliOptions.verbose as boolean,
+    );
+    const newFiles = parseGitDiff(
+        'new',
+        NEW_FILE_FILTER,
+        cliOptions.baseBranch as string,
+        cliOptions.verbose as boolean,
+    );
 
     /**
      * Finds all modified and new files that match the provided glob patterns.
@@ -48,12 +58,12 @@ function run(argv: Record<string, any>): void {
     const filteredNewFiles = filterFiles(newFiles, (cliOptions.trackGlobs as string).split(','));
 
     if (!filteredModifiedFiles.length && !filteredNewFiles.length) {
-        console.log(chalk.grey('No files match provided TRACK_GLOBS. Skipping...'));
+        console.log(chalk.grey('No files match provided --trackGlobs. Skipping...'));
         process.exit(0);
     }
 
     noTestCasesPresent.concat(getFilesWithNoTests('modified', filteredModifiedFiles, cliOptions.verbose as boolean));
-    noTestCasesPresent.concat(getFilesWithNoTests('new', filteredModifiedFiles, cliOptions.verbose as boolean));
+    noTestCasesPresent.concat(getFilesWithNoTests('new', filteredNewFiles, cliOptions.verbose as boolean));
 
     if (!cliOptions.skipCoverage) {
         validateCoverageFile(cliOptions.coverageFile as string);
@@ -115,7 +125,7 @@ function run(argv: Record<string, any>): void {
     }
 
     /**
-     * Utility fails with a non-zero status (error status) if any file has been flagged.
+     * CLI fails with a non-zero status (error status) if any file has been flagged.
      */
     if (noTestCasesPresent.length || thresholdFailures.length) {
         process.exit(-1);

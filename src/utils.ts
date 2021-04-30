@@ -10,7 +10,7 @@ import { CoverageFailureData } from './types';
 
 function logger(str: string, verbose: boolean): void {
     if (verbose) {
-        console.log(str);
+        console.log(chalk.gray(`[verbose] ${str}`));
     }
 }
 
@@ -92,6 +92,7 @@ export function parseGitDiff(
     fileType: string,
     filter: typeof MODIFIED_FILE_FILTER | typeof NEW_FILE_FILTER,
     baseBranch: string,
+    verbose: boolean,
 ): string[] {
     const spinner = ora(`Looking for ${chalk.blue(fileType)} files against the "${chalk.blue(baseBranch)}" branch`);
     spinner.start();
@@ -102,6 +103,8 @@ export function parseGitDiff(
     const files = extractFileNames(result, filter);
     spinner.succeed();
 
+    files.forEach((file) => logger(chalk.gray(file), verbose));
+
     return files;
 }
 
@@ -110,27 +113,25 @@ export function parseGitDiff(
  * tests is flagged.
  */
 export function getFilesWithNoTests(fileType: string, files: string[], verbose = false): string[] {
+    console.log(files);
     const spinner = ora(`Checking for related tests for ${fileType} files`);
     spinner.start();
 
     const noTestCasesPresent: string[] = [];
 
     files.forEach((file) => {
-        logger(chalk.blue(file), verbose);
-
         const testsExist = checkTestExistence(file);
 
         if (!testsExist) {
-            logger(chalk.red('[Fail] No related tests found'), verbose);
             noTestCasesPresent.push(file);
-        } else {
-            logger(chalk.green('[Pass] Tests found'), verbose);
         }
-
-        console.log('\n');
     });
 
     spinner.succeed();
+
+    noTestCasesPresent.forEach((file) => {
+        logger(chalk.red(`[Fail] No related tests found for ${file}`), verbose);
+    });
 
     return noTestCasesPresent;
 }
