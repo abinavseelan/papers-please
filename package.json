@@ -1,5 +1,5 @@
 {
-    "name": "papers-please",
+    "name": "@abinavseelan/papers-please",
     "version": "0.1.0",
     "description": "jest-based test case mandating tool for new code",
     "main": "lib/index.js",
@@ -27,6 +27,9 @@
         "pre-commit": "lint-staged",
         "fmt": "eslint ./src/** --quiet --fix",
         "prepublishOnly": "npm run build"
+    },
+    "publishConfig": {
+        "access": "public"
     },
     "repository": {
         "type": "git",
