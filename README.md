@@ -3,7 +3,7 @@
 > jest-based test case mandating tool for new code.
 
 <center>
-<img width="600" src="https://user-images.githubusercontent.com/6417910/116772849-4fb0a300-aa6f-11eb-9267-151bb3889bb6.gif" alt="PapersPleaseDemoReel" />
+<img width="600" src="https://user-images.githubusercontent.com/6417910/116773983-dae16700-aa76-11eb-811c-dd0f2bfbcb1b.gif" alt="PapersPleaseDemoReel" />
 </center>
 
 ## Install 
@@ -13,6 +13,16 @@ npm install -D papers-please
 ```
 
 Requires Node 8+ and [Jest](https://jestjs.io/docs/getting-started) 25.x+
+
+⚠️ For coverage reporting, Jest coverage needs be be collected as `json-summary`.
+
+```
+// In jest.config.js
+
+{
+  coverageReporters: ["json-summary"]
+}
+```
 
 ## Usage
 
@@ -42,15 +52,20 @@ npx papers-please --trackGlobs="**/src/**/*.js,**/client/**/*.js,**/server/**/*.
 
 ### As a git hook
 
-_papers-please_ can be used alongside [husky]()
+_papers-please_ can be used alongside [husky](https://typicode.github.io/husky/#/) to run validation on git commit and / or git push.
 
-```
-// In your package.json
+## Options
 
-{
-  "scripts": {
-    "validate": "npx papers-please --trackGlobs="**/src/**/*.js,**/client/**/*.js,**/server/**/*.js" --baseBranch="main""
-  }
-}
-```
-
+| Option                       | Type    | Description                                                                                                                                | Default Value                    |
+|------------------------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
+| --baseBranch                 | string  | Base branch to validate your branch against to derive new and modified files                                                               | origin/main                      |
+| --projectRoot                | string  | Root directory for the project. Assume this to be where the .git folder resides                                                            | process.cwd()                    |
+| --coverageFile               | string  | Path to the jest coverage report. **Note** The coverage summary report should be the json summary output                                   | ./coverage/coverage-summary.json |
+| --skipCoverage               | boolean | Skip coverage metrics validation                                                                                                           | false                            |
+| --trackGlobs                 | string  | List of comma-separated source files / globs to track. Any file that is modified or added that matches the glob pattern will be validated. | **/*                             |
+| --branchCoverageThreshold    | number  | Branch coverage threshold for new files (in percentage)                                                                                    | 80                               |
+| --functionCoverageThreshold  | number  | Function coverage threshold for new files (in percentage)                                                                                  | 80                               |
+| --lineCoverageThreshold      | number  | Line coverage threshold for new files (in percentage)                                                                                      | 80                               |
+| --statementCoverageThreshold | number  | Statement coverage threshold for new files (in percentage)                                                                                 | 80                               |
+| --help                       | boolean | Show usage and available options                                                                                                           | false                            |
+| --verbose                    | boolean | Show verbose output for each step                                                                                                          | false                            |
