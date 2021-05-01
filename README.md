@@ -1,6 +1,6 @@
 # papers-please
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 > jest-based test case mandating tool for new code.
@@ -84,6 +84,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://abinavseelan.com"><img src="https://avatars.githubusercontent.com/u/6417910?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Abinav Seelan</b></sub></a><br /><a href="https://github.com/abinavseelan/papers-please/commits?author=abinavseelan" title="Code">💻</a> <a href="https://github.com/abinavseelan/papers-please/commits?author=abinavseelan" title="Documentation">📖</a> <a href="#ideas-abinavseelan" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://aditimohanty.com"><img src="https://avatars.githubusercontent.com/u/6426069?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aditi Mohanty</b></sub></a><br /><a href="https://github.com/abinavseelan/papers-please/pulls?q=is%3Apr+reviewed-by%3Arheaditi" title="Reviewed Pull Requests">👀</a></td>
   </tr>
 </table>
 
