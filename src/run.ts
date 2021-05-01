@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 import { NEW_FILE_FILTER, MODIFIED_FILE_FILTER } from './constants';
-import { getCliOptions } from './cliOptions';
+import { CLIOptionObject, getCliOptions } from './cliOptions';
 import {
     filterFiles,
     getCoverageReport,
@@ -31,9 +31,7 @@ import { CoverageFailureData } from './types';
  * The cli exits with a failure if the flag count > 1
  */
 
-function run(argv: Record<string, any>): void {
-    const cliOptions = getCliOptions(argv);
-
+function run(cliOptions: CLIOptionObject): void {
     const noTestCasesPresent: string[] = [];
     const thresholdFailures: CoverageFailureData[] = [];
 
@@ -55,8 +53,18 @@ function run(argv: Record<string, any>): void {
     /**
      * Finds all modified and new files that match the provided glob patterns.
      */
-    const filteredModifiedFiles = filterFiles(modifiedFiles, (cliOptions.trackGlobs as string).split(','));
-    const filteredNewFiles = filterFiles(newFiles, (cliOptions.trackGlobs as string).split(','));
+    const filteredModifiedFiles = filterFiles(
+        'modified',
+        modifiedFiles,
+        (cliOptions.trackGlobs as string).split(','),
+        cliOptions.verbose as boolean,
+    );
+    const filteredNewFiles = filterFiles(
+        'new',
+        newFiles,
+        (cliOptions.trackGlobs as string).split(','),
+        cliOptions.verbose as boolean,
+    );
 
     if (!filteredModifiedFiles.length && !filteredNewFiles.length) {
         console.log(chalk.grey('No files match provided --trackGlobs. Skipping...'));
@@ -104,13 +112,13 @@ function run(argv: Record<string, any>): void {
     console.log('\n======== RESULT ========\n');
 
     if (noTestCasesPresent.length) {
-        console.log(chalk.red('❌ No Test Cases found for the following files:\n'));
+        console.log(chalk.red('❌ No Test Cases found for the following modified and new files:\n'));
         noTestCasesPresent.forEach((file) => console.log(file));
         console.log('\n');
     }
 
     if (thresholdFailures.length) {
-        console.log(chalk.red('❌ Coverage threshold not met for the following files:\n'));
+        console.log(chalk.red('❌ Coverage threshold not met for the following new files:\n'));
         thresholdFailures.forEach((result) => {
             console.log(result.filename);
             console.log(

@@ -1,4 +1,4 @@
-import micromatch from 'micromatch';
+import micromatch, { match } from 'micromatch';
 import ora from 'ora';
 import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
@@ -41,8 +41,19 @@ export function extractFileNames(
  *
  * https://github.com/micromatch/micromatch
  */
-export function filterFiles(files: string[], globList: string[]): string[] {
-    return micromatch(files, globList);
+export function filterFiles(fileType: string, files: string[], globList: string[], verbose = false): string[] {
+    const spinner = ora(`Filtering ${fileType} files that match --trackGlobs`);
+    spinner.start();
+
+    const matchedFiles = micromatch(files, globList);
+
+    spinner.succeed();
+
+    matchedFiles.forEach((file) => {
+        logger(file, verbose);
+    });
+
+    return matchedFiles;
 }
 
 /**

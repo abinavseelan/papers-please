@@ -70,7 +70,8 @@ export const CLI_OPTIONS = [
     },
 ] as const;
 
-export type CLIOptionObject = Record<ArrayElement<typeof CLI_OPTIONS>['valueKey'], string | number | boolean>;
+export type CLIOptionNames = ArrayElement<typeof CLI_OPTIONS>['valueKey'];
+export type CLIOptionObject = Record<CLIOptionNames, string | number | boolean>;
 
 export const getCliOptions = (argv: Record<string, any>): CLIOptionObject => {
     return CLI_OPTIONS.reduce((agg, cliOption) => {
