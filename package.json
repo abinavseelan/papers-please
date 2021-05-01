@@ -1,6 +1,6 @@
 {
     "name": "papers-please",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "jest-based test case mandating tool for new code",
     "main": "lib/index.js",
     "bin": {
@@ -8,8 +8,8 @@
         "papers-please": "bin/papers-please"
     },
     "files": [
-        "/bin",
-        "/lib",
+        "bin",
+        "lib",
         "package.json",
         "package-lock.json",
         "README.md",
@@ -25,7 +25,8 @@
         "local": "ts-node ./src/index.ts",
         "build": "rollup -c rollup.config.js",
         "pre-commit": "lint-staged",
-        "fmt": "eslint ./src/** --quiet --fix"
+        "fmt": "eslint ./src/** --quiet --fix",
+        "prepublishOnly": "npm run build"
     },
     "repository": {
         "type": "git",
