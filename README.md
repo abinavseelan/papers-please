@@ -2,7 +2,6 @@
 
 > jest-based test case mandating tool for new code.
 
-
 <img width="100%" src="https://user-images.githubusercontent.com/6417910/116773983-dae16700-aa76-11eb-811c-dd0f2bfbcb1b.gif" alt="PapersPleaseDemoReel" />
 
 ## Install 
@@ -68,3 +67,7 @@ _papers-please_ can be used alongside [husky](https://typicode.github.io/husky/#
 | --statementCoverageThreshold | number  | Statement coverage threshold for new files (in percentage)                                                                                 | 80                               |
 | --help                       | boolean | Show usage and available options                                                                                                           | false                            |
 | --verbose                    | boolean | Show verbose output for each step                                                                                                          | false                            |
+
+## Contributing
+
+Want to fix something, add a new feature or raise an issue? Please read the [contributing guide](https://github.com/abinavseelan/papers-please/blob/main/CONTRIBUTING.md) to get started. :smile:
