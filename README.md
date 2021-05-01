@@ -2,9 +2,8 @@
 
 > jest-based test case mandating tool for new code.
 
-<center>
-<img width="600" src="https://user-images.githubusercontent.com/6417910/116773983-dae16700-aa76-11eb-811c-dd0f2bfbcb1b.gif" alt="PapersPleaseDemoReel" />
-</center>
+
+<img width="100%" src="https://user-images.githubusercontent.com/6417910/116773983-dae16700-aa76-11eb-811c-dd0f2bfbcb1b.gif" alt="PapersPleaseDemoReel" />
 
 ## Install 
 
