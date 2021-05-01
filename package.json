@@ -18,7 +18,10 @@
     "keywords": [
         "jest",
         "cli",
-        "tests"
+        "tests",
+        "ci",
+        "coverage",
+        "tooling"
     ],
     "scripts": {
         "prepare": "husky install",
