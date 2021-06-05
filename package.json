@@ -1,6 +1,6 @@
 {
     "name": "@abinavseelan/papers-please",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "jest-based test case mandating tool for new code",
     "main": "lib/index.js",
     "bin": {
