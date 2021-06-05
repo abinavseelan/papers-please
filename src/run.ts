@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 import { NEW_FILE_FILTER, MODIFIED_FILE_FILTER } from './constants';
-import { CLIOptionObject, getCliOptions } from './cliOptions';
+import { CLIOptionObject } from './cliOptions';
 import {
     filterFiles,
     getCoverageReport,
@@ -11,6 +11,7 @@ import {
     validateCoverageFile,
     validateCoverageMetrics,
     logger,
+    performGitFetch,
 } from './utils';
 import { CoverageFailureData } from './types';
 
@@ -36,6 +37,7 @@ function run(cliOptions: CLIOptionObject): void {
     const thresholdFailures: CoverageFailureData[] = [];
 
     overrideGitPager();
+    performGitFetch();
 
     const modifiedFiles = parseGitDiff(
         'modified',

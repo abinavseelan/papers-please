@@ -47,6 +47,7 @@ export function filterFiles(fileType: string, files: string[], globList: string[
 
     const matchedFiles = micromatch(files, globList);
 
+    spinner.text = `Filtering ${fileType} files that match --trackGlobs (Found ${matchedFiles.length} file(s))`;
     spinner.succeed();
 
     matchedFiles.forEach((file) => {
@@ -90,6 +91,13 @@ export function overrideGitPager(): void {
     spinner.succeed();
 }
 
+export function performGitFetch(): void {
+    const spinner = ora('Running a `git fetch`');
+    spinner.start();
+    execSync('git fetch');
+    spinner.succeed();
+}
+
 /**
  * Runs `git diff --name-status --diff-filter=<filter value> <base branch>
  *
@@ -124,17 +132,23 @@ export function parseGitDiff(
  * tests is flagged.
  */
 export function getFilesWithNoTests(fileType: string, files: string[], verbose = false): string[] {
-    const spinner = ora(`Checking for related tests for ${fileType} files`);
+    const spinner = ora(`Checking for related tests for ${fileType} files (${files.length} files)`);
+    console.log(
+        chalk.grey('Based on the number of files found and the size of the codebase, this may take some time...'),
+    );
+
     spinner.start();
 
     const noTestCasesPresent: string[] = [];
 
-    files.forEach((file) => {
+    files.forEach(async (file, index) => {
         const testsExist = checkTestExistence(file);
 
         if (!testsExist) {
             noTestCasesPresent.push(file);
         }
+
+        spinner.text = `Checking for related tests for ${fileType} files (${index + 1} / ${files.length})`;
     });
 
     spinner.succeed();
