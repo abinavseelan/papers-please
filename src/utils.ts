@@ -1,4 +1,4 @@
-import micromatch, { match } from 'micromatch';
+import micromatch from 'micromatch';
 import ora from 'ora';
 import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
@@ -132,23 +132,23 @@ export function parseGitDiff(
  * tests is flagged.
  */
 export function getFilesWithNoTests(fileType: string, files: string[], verbose = false): string[] {
-    const spinner = ora(`Checking for related tests for ${fileType} files (${files.length} files)`);
-    console.log(
-        chalk.grey('Based on the number of files found and the size of the codebase, this may take some time...'),
-    );
+    const spinner = ora(`Checking for related tests for ${fileType} files`);
+    console.log(chalk.gray('Based on the size of the codebase, this may take some time'));
 
     spinner.start();
 
     const noTestCasesPresent: string[] = [];
 
-    files.forEach(async (file, index) => {
+    files.forEach((file, index) => {
         const testsExist = checkTestExistence(file);
 
         if (!testsExist) {
             noTestCasesPresent.push(file);
         }
 
-        spinner.text = `Checking for related tests for ${fileType} files (${index + 1} / ${files.length})`;
+        spinner.stopAndPersist({
+            text: `Checking for related tests for ${fileType} files (${index + 1}/${files.length} files)`,
+        });
     });
 
     spinner.succeed();
