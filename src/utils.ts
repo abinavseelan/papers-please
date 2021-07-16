@@ -1,12 +1,12 @@
 import micromatch from 'micromatch';
 import ora from 'ora';
 import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
+import fs, { existsSync, readFileSync } from 'fs';
 import chalk from 'chalk';
 
-import { NEW_FILE_FILTER, MODIFIED_FILE_FILTER } from './constants';
+import { NEW_FILE_FILTER, MODIFIED_FILE_FILTER, DEFAULT_METRIC_VALUE } from './constants';
 import { CLIOptionObject } from './cliOptions';
-import { CoverageFailureData } from './types';
+import { CoverageFailureData, StatsFieldDataType } from './types';
 
 export function logger(str: string, verbose: boolean): void {
     if (verbose) {
@@ -237,6 +237,10 @@ export function validateCoverageMetrics(
         }
     });
 
+    if (cliOptions.exposeMetrics && fileMetrics.length) {
+        exposeCoverageMetrics(coverageReport, files, cliOptions);
+    }
+
     spinner.succeed();
 
     fileMetrics.forEach((metric) => {
@@ -244,4 +248,47 @@ export function validateCoverageMetrics(
     });
 
     return failures;
+}
+
+function getFormattedMetricData(coverageData: StatsFieldDataType) {
+    const { skipped, covered, pct } = coverageData;
+    return {
+        missed: { ...DEFAULT_METRIC_VALUE.missed, value: skipped },
+        covered: { ...DEFAULT_METRIC_VALUE.covered, value: covered },
+        percentage: { ...DEFAULT_METRIC_VALUE.percentage, value: pct },
+    };
+}
+
+export function exposeCoverageMetrics(
+    coverageReport: Record<string, any>,
+    files: string[],
+    cliOptions: CLIOptionObject,
+): void {
+    const moduleData: any[] = [];
+
+    files.forEach((file) => {
+        const testCaseMetrics = coverageReport[`${cliOptions.projectRoot}/${file}`];
+
+        if (testCaseMetrics) {
+            const { lines, functions, branches } = testCaseMetrics;
+
+            moduleData.push({
+                name: { ...DEFAULT_METRIC_VALUE.name, value: file },
+                stats: {
+                    line: getFormattedMetricData(lines),
+                    branch: getFormattedMetricData(branches),
+                    method: getFormattedMetricData(functions),
+                },
+            });
+        }
+    });
+
+    const coverageReportData = {
+        name: { ...DEFAULT_METRIC_VALUE.name, value: 'MAP-UNIT_TEST' },
+        modules: moduleData,
+    };
+
+    fs.writeFile(`${cliOptions.projectRoot}/coverage-metrics.json`, JSON.stringify(coverageReportData), (err) => {
+        if (err) throw err;
+    });
 }

@@ -9,3 +9,10 @@ export type CoverageFailureData = {
     lines: number;
     statements: number;
 };
+
+export type StatsFieldDataType = {
+    total: number;
+    covered: number;
+    skipped: number;
+    pct: number;
+};
