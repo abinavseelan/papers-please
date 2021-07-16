@@ -204,6 +204,7 @@ export function validateCoverageMetrics(
 
     const failures: CoverageFailureData[] = [];
     const fileMetrics: CoverageFailureData[] = [];
+    const coverageMetrics: any[] = [];
 
     files.forEach((file) => {
         // Extract metrics for file from coverage report
@@ -211,6 +212,8 @@ export function validateCoverageMetrics(
 
         if (testCaseMetrics) {
             const { lines, functions, statements, branches } = testCaseMetrics;
+
+            coverageMetrics.push({ lines, functions, branches, name: file });
 
             fileMetrics.push({
                 branches: branches.pct,
@@ -237,8 +240,8 @@ export function validateCoverageMetrics(
         }
     });
 
-    if (cliOptions.exposeMetrics && fileMetrics.length) {
-        exposeCoverageMetrics(coverageReport, files, cliOptions);
+    if (cliOptions.exposeMetrics && coverageMetrics.length) {
+        exposeCoverageMetrics(coverageMetrics, cliOptions.projectRoot);
     }
 
     spinner.succeed();
@@ -259,36 +262,71 @@ function getFormattedMetricData(coverageData: StatsFieldDataType) {
     };
 }
 
-export function exposeCoverageMetrics(
-    coverageReport: Record<string, any>,
-    files: string[],
-    cliOptions: CLIOptionObject,
-): void {
+function getAggregatedMetrics(metricsList: any[]) {
+    const aggData: any = {
+        lines: { total: 0, covered: 0, skipped: 0 },
+        branches: { total: 0, covered: 0, skipped: 0 },
+        functions: { total: 0, covered: 0, skipped: 0 },
+    };
+
+    metricsList.forEach((metric: any) => {
+        const { lines, functions, branches } = metric;
+
+        aggData.lines.total += lines.total;
+        aggData.lines.covered += lines.covered;
+        aggData.lines.skipped += lines.skipped;
+
+        aggData.functions.total += functions.total;
+        aggData.functions.covered += functions.covered;
+        aggData.functions.skipped += functions.skipped;
+
+        aggData.branches.total += branches.total;
+        aggData.branches.covered += branches.covered;
+        aggData.branches.skipped += branches.skipped;
+    });
+
+    for (const key: string in aggData) {
+        const { total, covered } = aggData[key];
+
+        let pct: number = (covered / total) * 100;
+        if (!Number.isInteger(pct)) {
+            pct = parseFloat(pct.toFixed(2));
+        }
+        aggData[key].pct = pct;
+    }
+
+    return aggData;
+}
+
+export function exposeCoverageMetrics(coverageMetrics: Record<string, any>[], projectRoot: any): void {
     const moduleData: any[] = [];
 
-    files.forEach((file) => {
-        const testCaseMetrics = coverageReport[`${cliOptions.projectRoot}/${file}`];
+    coverageMetrics.forEach((metric) => {
+        const { lines, functions, branches, name } = metric;
 
-        if (testCaseMetrics) {
-            const { lines, functions, branches } = testCaseMetrics;
-
-            moduleData.push({
-                name: { ...DEFAULT_METRIC_VALUE.name, value: file },
-                stats: {
-                    line: getFormattedMetricData(lines),
-                    branch: getFormattedMetricData(branches),
-                    method: getFormattedMetricData(functions),
-                },
-            });
-        }
+        moduleData.push({
+            name: { ...DEFAULT_METRIC_VALUE.name, value: name },
+            stats: {
+                line: getFormattedMetricData(lines),
+                branch: getFormattedMetricData(branches),
+                method: getFormattedMetricData(functions),
+            },
+        });
     });
+
+    const { lines, functions, branches } = getAggregatedMetrics(coverageMetrics);
 
     const coverageReportData = {
         name: { ...DEFAULT_METRIC_VALUE.name, value: 'MAP-UNIT_TEST' },
+        stats: {
+            line: getFormattedMetricData(lines),
+            branch: getFormattedMetricData(branches),
+            method: getFormattedMetricData(functions),
+        },
         modules: moduleData,
     };
 
-    fs.writeFile(`${cliOptions.projectRoot}/coverage-metrics.json`, JSON.stringify(coverageReportData), (err) => {
+    fs.writeFile(`${projectRoot}/coverage-metrics.json`, JSON.stringify(coverageReportData), (err) => {
         if (err) throw err;
     });
 }
