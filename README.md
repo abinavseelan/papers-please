@@ -70,7 +70,7 @@ _papers-please_ can be used alongside [husky](https://typicode.github.io/husky/#
 | --statementCoverageThreshold | number  | Statement coverage threshold for new files (in percentage)                                                                                 | 80                               |
 | --help                       | boolean | Show usage and available options                                                                                                           | false                            |
 | --verbose                    | boolean | Show verbose output for each step                                                                                                          | false                            |
-| --exposeMetrics              | boolean | Exposes coverage metrics for the modified/added files which matches the glob pattern                                                       | false                            |
+| --exposeMetrics              | boolean | Exposes coverage metrics into a json file for the modified/added files which matches the glob pattern                                                       | false                            |
 
 ## Contributing
 
