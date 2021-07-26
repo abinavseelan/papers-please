@@ -10,9 +10,23 @@ export type CoverageFailureData = {
     statements: number;
 };
 
-export type StatsFieldDataType = {
-    total: number;
-    covered: number;
-    skipped: number;
-    pct: number;
+export type MetricFieldData = Record<'total' | 'covered' | 'skipped' | 'pct', number>;
+
+export type CoverageMetricsData = {
+    lines: MetricFieldData;
+    functions: MetricFieldData;
+    branches: MetricFieldData;
+    name: string;
+};
+
+type CommonCoverageInfoField = Record<'text' | 'type', string>;
+
+type LineBranchMethodDataType = Record<
+    'missed' | 'covered' | 'percentage',
+    CommonCoverageInfoField & { value: number }
+>;
+
+export type CoverageModuleData = {
+    name: CommonCoverageInfoField & { value: string };
+    stats: Record<'line' | 'branch' | 'method', LineBranchMethodDataType>;
 };

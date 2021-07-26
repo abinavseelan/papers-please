@@ -6,7 +6,7 @@ import chalk from 'chalk';
 
 import { NEW_FILE_FILTER, MODIFIED_FILE_FILTER, DEFAULT_METRIC_VALUE } from './constants';
 import { CLIOptionObject } from './cliOptions';
-import { CoverageFailureData, StatsFieldDataType } from './types';
+import { CoverageFailureData, CoverageMetricsData, MetricFieldData, CoverageModuleData } from './types';
 
 export function logger(str: string, verbose: boolean): void {
     if (verbose) {
@@ -204,7 +204,7 @@ export function validateCoverageMetrics(
 
     const failures: CoverageFailureData[] = [];
     const fileMetrics: CoverageFailureData[] = [];
-    const coverageMetrics: any[] = [];
+    const coverageMetrics: CoverageMetricsData[] = [];
 
     files.forEach((file) => {
         // Extract metrics for file from coverage report
@@ -241,7 +241,7 @@ export function validateCoverageMetrics(
     });
 
     if (cliOptions.exposeMetrics && coverageMetrics.length) {
-        exposeCoverageMetrics(coverageMetrics, cliOptions.projectRoot);
+        exposeCoverageMetrics(coverageMetrics, cliOptions.projectRoot as string);
     }
 
     spinner.succeed();
@@ -253,7 +253,7 @@ export function validateCoverageMetrics(
     return failures;
 }
 
-function getFormattedMetricData(coverageData: StatsFieldDataType) {
+function getFormattedMetricData(coverageData: MetricFieldData) {
     const { skipped, covered, pct } = coverageData;
     return {
         missed: { ...DEFAULT_METRIC_VALUE.missed, value: skipped },
@@ -262,14 +262,14 @@ function getFormattedMetricData(coverageData: StatsFieldDataType) {
     };
 }
 
-function getAggregatedMetrics(metricsList: any[]) {
-    const aggData: any = {
-        lines: { total: 0, covered: 0, skipped: 0 },
-        branches: { total: 0, covered: 0, skipped: 0 },
-        functions: { total: 0, covered: 0, skipped: 0 },
+function getAggregatedMetrics(metricsList: CoverageMetricsData[]) {
+    const aggData: Omit<CoverageMetricsData, 'name'> = {
+        lines: { total: 0, covered: 0, skipped: 0, pct: 0 },
+        branches: { total: 0, covered: 0, skipped: 0, pct: 0 },
+        functions: { total: 0, covered: 0, skipped: 0, pct: 0 },
     };
 
-    metricsList.forEach((metric: any) => {
+    metricsList.forEach((metric) => {
         const { lines, functions, branches } = metric;
 
         aggData.lines.total += lines.total;
@@ -285,7 +285,7 @@ function getAggregatedMetrics(metricsList: any[]) {
         aggData.branches.skipped += branches.skipped;
     });
 
-    for (const key: string in aggData) {
+    (Object.keys(aggData) as Array<keyof typeof aggData>).forEach((key) => {
         const { total, covered } = aggData[key];
 
         let pct: number = (covered / total) * 100;
@@ -293,13 +293,13 @@ function getAggregatedMetrics(metricsList: any[]) {
             pct = parseFloat(pct.toFixed(2));
         }
         aggData[key].pct = pct;
-    }
+    });
 
     return aggData;
 }
 
-export function exposeCoverageMetrics(coverageMetrics: Record<string, any>[], projectRoot: any): void {
-    const moduleData: any[] = [];
+export function exposeCoverageMetrics(coverageMetrics: CoverageMetricsData[], projectRoot: string): void {
+    const moduleData: CoverageModuleData[] = [];
 
     coverageMetrics.forEach((metric) => {
         const { lines, functions, branches, name } = metric;
