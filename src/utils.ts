@@ -326,7 +326,5 @@ export function exposeCoverageMetrics(coverageMetrics: CoverageMetricsData[], pr
         modules: moduleData,
     };
 
-    fs.writeFile(`${projectRoot}/coverage-metrics.json`, JSON.stringify(coverageReportData), (err) => {
-        if (err) throw err;
-    });
+    fs.writeFileSync(`${projectRoot}/coverage-metrics.json`, JSON.stringify(coverageReportData));
 }
