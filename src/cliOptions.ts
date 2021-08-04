@@ -68,6 +68,12 @@ export const CLI_OPTIONS = [
         valueKey: 'verbose',
         valueType: 'boolean',
     },
+    {
+        defaultValue: false,
+        description: 'Export coverage to a json file',
+        valueKey: 'exposeMetrics',
+        valueType: 'boolean',
+    },
 ] as const;
 
 export type CLIOptionNames = ArrayElement<typeof CLI_OPTIONS>['valueKey'];
